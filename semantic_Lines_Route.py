@@ -1,4 +1,3 @@
-# %%
 
 import pandas as pd
 from math import sin, cos, sqrt, atan2, radians
@@ -56,7 +55,6 @@ def _genSparql(src="", des="", num_lines=1, show_stations=False):
 
     return "SELECT DISTINCT " + select + " WHERE { " + con1 + con2 + con3 + " } " + "LIMIT 1"
 
-
 def findMinHop(start, des, loaded_graph_rdf):
     hop = 3
     max_hops = 4
@@ -88,10 +86,31 @@ def findMinHop(start, des, loaded_graph_rdf):
             hop += 1
     return linePath
 
-
 def _findDistanceTH(lat1, lon1, lat2, lon2):
     return (110*((lat1-lat2)**2+(lon1-lon2)**2)**0.5)*1000
 
+def findTravelTime(sid1, sid2):
+
+    # route = 169
+    _TimeTravel = "data/csv/time_travel.csv" 
+    TimeTravel = pd.read_csv(_TimeTravel)
+
+    filtered_sid1 = TimeTravel[TimeTravel['sid'] == sid1]
+    filtered_sid2 = TimeTravel[TimeTravel['sid'] == sid2]
+
+    merged = filtered_sid1.merge(filtered_sid2, on=('day_of_week', 'hr'))
+
+    merged.drop_duplicates(["hr"], inplace=True)
+
+    merged['ts_x'] = pd.to_datetime(merged['ts_x'])
+    merged['ts_y'] = pd.to_datetime(merged['ts_y'])
+
+
+    mins = (merged['ts_y'] - merged['ts_x']).dt.total_seconds()/60
+    mins = [value for value in mins if value > 0]
+    result = int(mins[0]) if mins else 0
+
+    return result
 
 def getRoute(start_lat, start_lon, destination_lat, destination_lon):
     seq = 1
@@ -150,8 +169,6 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
                 else:
                     busStopHead = re.search(r'\d+', minHops[i+1]).group()
                     busStopTail = re.search(r'\d+', minHops[i-1]).group()
-
-                    timeTravel = findTravelTime(busStopHead,busStopTail)
 
                     nameEngHead = mainRoutes.loc[mainRoutes['sid'] == int(
                         busStopHead), 'name_e'].values[0]
@@ -358,9 +375,3 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
 
     return parsed_data
 
-
-# %%
-getRoute(13.751797798437075, 100.50820436717605,
-         13.761184103576973, 100.6456136401535)
-
-# %%
