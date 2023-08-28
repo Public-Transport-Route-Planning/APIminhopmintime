@@ -1,0 +1,295 @@
+'{
+    "code": 200,
+    "message": "ok",
+    "plan": [
+        {
+            "seq": 1,
+            "travel_type": 1,
+            "travel_time_name": "walk",
+            "travel_time_sec": 600,
+            "travel_distance_m": 100,
+            "route": null,
+            "take_at_busstop": null,
+            "getoff_at_busstop": null,
+            "from_place": {
+                "place_id": null,
+                "place_name_th": "\\u0e08\\u0e38\\u0e14\\u0e40\\u0e23\\u0e34\\u0e48\\u0e21\\u0e15\\u0e49\\u0e19",
+                "place_name_en": "Start Point",
+                "place_lat": 13.751797798437075,
+                "place_lon": 100.50820436717605
+            },
+            "to_place": {
+                "place_id": 1569,
+                "place_name_th": "\\u0e1b\\u0e23\\u0e30\\u0e1b\\u0e32\\u0e41\\u0e21\\u0e49\\u0e19\\u0e28\\u0e23\\u0e35",
+                "place_name_en": "Maensri Mwa Office",
+                "place_lat": 13,
+                "place_lon": 100
+            },
+            "polyline": null
+        },
+        {
+            "seq": 2,
+            "travel_type": 2,
+            "travel_time_name": "bus",
+            "travel_time_sec": 420,
+            "travel_distance_m": 100,
+            "route": {
+                "route_id": 445,
+                "route_name": "169",
+                "start_busstop_name_th": "\\u0e1b\\u0e23\\u0e30\\u0e1b\\u0e32\\u0e41\\u0e21\\u0e49\\u0e19\\u0e28\\u0e23\\u0e35",
+                "start_busstop_name_en": "Maensri Mwa Office",
+                "end_busstop_id": 2046,
+                "end_busstop_name_th": "\\u0e23\\u0e32\\u0e0a\\u0e14\\u0e33\\u0e40\\u0e19\\u0e34\\u0e19\\u0e04\\u0e2d\\u0e19\\u0e42\\u0e14\\u0e21\\u0e34\\u0e40\\u0e19\\u0e35\\u0e22\\u0e21",
+                "end_busstop_name_en": "Ratchadamnoen Condominium"
+            },
+            "take_at_busstop": {
+                "busstop_id": 1569,
+                "busstop_name_th": "\\u0e1b\\u0e23\\u0e30\\u0e1b\\u0e32\\u0e41\\u0e21\\u0e49\\u0e19\\u0e28\\u0e23\\u0e35",
+                "busstop_name_en": "Maensri Mwa Office",
+                "busstop_lat": 13,
+                "busstop_lon": 100
+            },
+            "getoff_at_busstop": {
+                "busstop_id": 2046,
+                "busstop_name_th": "\\u0e23\\u0e32\\u0e0a\\u0e14\\u0e33\\u0e40\\u0e19\\u0e34\\u0e19\\u0e04\\u0e2d\\u0e19\\u0e42\\u0e14\\u0e21\\u0e34\\u0e40\\u0e19\\u0e35\\u0e22\\u0e21",
+                "busstop_name_en": "Ratchadamnoen Condominium",
+                "busstop_lat": 13,
+                "busstop_lon": 100
+            },
+            "from_place": null,
+            "to_place": null,
+            "polyline": [
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                }
+            ]
+        },
+        {
+            "seq": 3,
+            "travel_type": 2,
+            "travel_time_name": "bus",
+            "travel_time_sec": 420,
+            "travel_distance_m": 100,
+            "route": {
+                "route_id": 449,
+                "route_name": "171",
+                "start_busstop_name_th": "\\u0e23\\u0e32\\u0e0a\\u0e14\\u0e33\\u0e40\\u0e19\\u0e34\\u0e19\\u0e04\\u0e2d\\u0e19\\u0e42\\u0e14\\u0e21\\u0e34\\u0e40\\u0e19\\u0e35\\u0e22\\u0e21",
+                "start_busstop_name_en": "Ratchadamnoen Condominium",
+                "end_busstop_id": 2843,
+                "end_busstop_name_th": "\\u0e41\\u0e22\\u0e01\\u0e25\\u0e33\\u0e2a\\u0e32\\u0e25\\u0e35(\\u0e16\\u0e19\\u0e19\\u0e28\\u0e23\\u0e35\\u0e19\\u0e04\\u0e23\\u0e34\\u0e19\\u0e17\\u0e23\\u0e4c\\u0e02\\u0e32\\u0e2d\\u0e2d\\u0e01)",
+                "end_busstop_name_en": "lamsalee Intersection"
+            },
+            "take_at_busstop": {
+                "busstop_id": 2046,
+                "busstop_name_th": "\\u0e23\\u0e32\\u0e0a\\u0e14\\u0e33\\u0e40\\u0e19\\u0e34\\u0e19\\u0e04\\u0e2d\\u0e19\\u0e42\\u0e14\\u0e21\\u0e34\\u0e40\\u0e19\\u0e35\\u0e22\\u0e21",
+                "busstop_name_en": "Ratchadamnoen Condominium",
+                "busstop_lat": 13,
+                "busstop_lon": 100
+            },
+            "getoff_at_busstop": {
+                "busstop_id": 2843,
+                "busstop_name_th": "\\u0e41\\u0e22\\u0e01\\u0e25\\u0e33\\u0e2a\\u0e32\\u0e25\\u0e35(\\u0e16\\u0e19\\u0e19\\u0e28\\u0e23\\u0e35\\u0e19\\u0e04\\u0e23\\u0e34\\u0e19\\u0e17\\u0e23\\u0e4c\\u0e02\\u0e32\\u0e2d\\u0e2d\\u0e01)",
+                "busstop_name_en": "lamsalee Intersection",
+                "busstop_lat": 13,
+                "busstop_lon": 100
+            },
+            "from_place": null,
+            "to_place": null,
+            "polyline": [
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                },
+                {
+                    "line_lat": 13,
+                    "line_lon": 100
+                }
+            ]
+        }
+    ]
+}'
