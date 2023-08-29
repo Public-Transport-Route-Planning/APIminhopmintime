@@ -1,21 +1,23 @@
-#%%
+
 import pandas as pd
-from math import sin, cos, sqrt, atan2, radians
-from rdflib import URIRef, BNode, Literal
-from rdflib import Namespace
 from rdflib import Graph
 from rdflib.namespace import CSVW, DC, DCAT, DCTERMS, DOAP, FOAF, ODRL2, ORG, OWL, PROF, PROV, RDF, RDFS, SDO, SH, SKOS, SOSA, SSN, TIME, VOID, XMLNS, XSD
-from rdflib.plugins import sparql
-from rdflib.plugins.sparql.processor import SPARQLResult
 import re
 from enum import Enum
 from flask import json
 import random
 
+import pandas as pd
+import numpy as np
+
 
 class TravelType(Enum):
     Bus = 1
     Walk = 2
+
+
+bus_path = 'data/csv/bus_routes.csv'
+bus_route = pd.read_csv(bus_path)
 
 
 def _genSparql(src="", des="", num_lines=1, show_stations=False):
@@ -55,6 +57,7 @@ def _genSparql(src="", des="", num_lines=1, show_stations=False):
 
     return "SELECT DISTINCT " + select + " WHERE { " + con1 + con2 + con3 + " } " + "LIMIT 1"
 
+
 def findMinHop(start, des, loaded_graph_rdf):
     hop = 3
     max_hops = 4
@@ -86,15 +89,47 @@ def findMinHop(start, des, loaded_graph_rdf):
             hop += 1
     return linePath
 
+
 def _findDistanceTH(lat1, lon1, lat2, lon2):
     return (110*((lat1-lat2)**2+(lon1-lon2)**2)**0.5)*1000
+
+
+def find_closest_point(target, points):
+    closest_point = min(points, key=lambda point: abs(
+        target[0] - point[0]) + abs(target[1] - point[1]))
+    return closest_point
+
+
+def reshape_ansline_to_rpath(routeId, lines):
+    rpath = bus_route[bus_route["route_id"] == routeId]["polyline"].iloc[0]
+    rpath = eval(rpath)
+
+    if len(lines) < 2:
+        return None
+
+    line_start = lines[0]
+    line_end = lines[-1]
+
+    closest_start = find_closest_point(line_start, rpath)
+    closest_end = find_closest_point(line_end, rpath)
+
+    start_index = rpath.index(closest_start)
+    end_index = rpath.index(closest_end)
+
+    if start_index < end_index + 1:
+        reshaped_ansline = rpath[start_index: end_index + 1]
+    else:
+        reshaped_ansline = rpath[end_index: start_index + 1]
+
+    return reshaped_ansline
+
 
 def getRoute(start_lat, start_lon, destination_lat, destination_lon):
     seq = 1
     firstTime = True
     seqPath = []
     planPath = []
-  
+
     _mainRoutes = "data/csv/mainRoutes.csv"
     mainRoutes = pd.read_csv(_mainRoutes)
 
@@ -118,27 +153,31 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
         if minHops[i].startswith("bus_"):
             busNumber = re.search(r'\d+', minHops[i]).group()
             if minHops[i].endswith("_gt"):
-                mainGo = mainRoutes[(mainRoutes['direction'] == 'go') & (mainRoutes['route_id'] == str(busNumber))]
+                mainGo = mainRoutes[(mainRoutes['direction'] == 'go') & (
+                    mainRoutes['route_id'] == str(busNumber))]
 
                 if firstTime:
                     busStop = re.search(r'\d+', minHops[i+1]).group()
-                    
-                    nameEng = mainRoutes.loc[mainRoutes['sid'] == int(busStop), 'name_e'].values[0]
-                    seqEnd = mainGo.loc[(mainGo['name_e'] == nameEng), 'seq'].values[0]
-                    path = mainGo[(mainGo['seq'] >= closest_startpoint['seq']) & (mainRoutes['seq'] <= seqEnd)]
+
+                    nameEng = mainRoutes.loc[mainRoutes['sid'] == int(
+                        busStop), 'name_e'].values[0]
+                    seqEnd = mainGo.loc[(
+                        mainGo['name_e'] == nameEng), 'seq'].values[0]
+                    path = mainGo[(mainGo['seq'] >= closest_startpoint['seq']) & (
+                        mainRoutes['seq'] <= seqEnd)]
                     firstTime = False
                     seqPath.append({1: path})
 
                 elif i == len(minHops)-1:
                     busStop = re.search(r'\d+', minHops[i-1]).group()
-                    
+
                     nameEng = mainRoutes.loc[mainRoutes['sid'] == int(
                         busStop), 'name_e'].values[0]
                     seqStart = mainGo.loc[(mainGo['name_e']
                                            == nameEng), 'seq'].values[0]
                     seqEnd = mainGo.loc[(mainGo['name_e']
                                          == closest_destinationpoint['name_e']), 'seq'].values[0]
-         
+
                     path = mainGo[(mainRoutes['seq'] <= seqEnd) & (
                         mainGo['seq'] >= seqStart)]
                     seqPath.append({1: path})
@@ -191,7 +230,7 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
                     busStopHead = re.search(r'\d+', minHops[i+1]).group()
                     busStopTail = re.search(r'\d+', minHops[i-1]).group()
 
-                    timeTravel.findTravelTime(busStopHead,busStopTail)
+                    timeTravel.findTravelTime(busStopHead, busStopTail)
 
                     nameEngHead = mainRoutes.loc[mainRoutes['sid'] == int(
                         busStopHead), 'name_e'].values[0]
@@ -203,13 +242,14 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
                                            == nameEngTail), 'seq'].values[0]
                     path = mainBack[(mainBack['seq']
                                      >= seqStart) & (mainRoutes['seq'] <= seqEnd)]
-            
+
                     seqPath.append({1: path})
 
         elif minHops[i].startswith("walk"):
-          
-            seqPath.append({2: "walk"})
 
+            seqPath.append({2: "walk"})
+    ansline = []
+    route_ansLines = {}
     for index in range(len(seqPath)):
         for key in seqPath[index]:
             timeTravel = random.randint(5, 10)*60
@@ -235,8 +275,8 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
                             "place_id": closest_startpoint['sid'],
                             "place_name_th": closest_startpoint['sname'],
                             "place_name_en": closest_startpoint['name_e'],
-                            "place_lat": int(closest_startpoint['lat']),
-                            "place_lon": int(closest_startpoint['lon'])
+                            "place_lat": closest_startpoint['lat'],
+                            "place_lon": closest_startpoint['lon']
                         },
                         "polyline": None
                     }
@@ -259,15 +299,15 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
                         "place_id": from_place['sid'],
                         "place_name_th": from_place['sname'],
                         "place_name_en": from_place['name_e'],
-                        "place_lat": int(from_place['lat']),
-                        "place_lon": int(from_place['lon'])
+                        "place_lat": from_place['lat'],
+                        "place_lon": from_place['lon']
                     },
                     "to_place": {
                         "place_id": to_place['sid'],
                         "place_name_th": to_place['sname'],
                         "place_name_en": to_place['name_e'],
-                        "place_lat": int(to_place['lat']),
-                        "place_lon": int(to_place['lon']),
+                        "place_lat": to_place['lat'],
+                        "place_lon": to_place['lon'],
                     },
                     "polyline": None
 
@@ -297,8 +337,8 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
                         "place_id": to_place['sid'],
                         "place_name_th": to_place['sname'],
                         "place_name_en": to_place['name_e'],
-                        "place_lat": int(to_place['lat']),
-                        "place_lon": int(to_place['lon']),
+                        "place_lat": to_place['lat'],
+                        "place_lon": to_place['lon'],
                     },
                     "polyline": None
                 }
@@ -309,9 +349,17 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
                 busPlan = seqPath[index][key]
                 takeAt = busPlan.iloc[0]
                 getOffAt = busPlan.iloc[-1]
-                _polyLine = busPlan[['lat', 'lon']].astype(float).values.tolist()
+                _polyLine = busPlan[['lat', 'lon']].astype(
+                    float).values.tolist()
                 polyLine = [{"line_lat": lat, "line_lon": lon}
                             for lat, lon in _polyLine]
+                for i in _polyLine:
+                    ansline.append(i)
+
+                reshaped_ansline = reshape_ansline_to_rpath(
+                    takeAt['route_id'], ansline)
+                route_ansLines[takeAt['route_id']] = reshaped_ansline
+                print(reshaped_ansline)
                 plan = {
                     "seq": seq,
                     "travel_type": 2,
@@ -331,27 +379,24 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
                         "busstop_id": takeAt['sid'],
                         "busstop_name_th": takeAt['sname'],
                         "busstop_name_en": takeAt['name_e'],
-                        "busstop_lat": int(takeAt['lat']),
-                        "busstop_lon": int(takeAt['lon']),
+                        "busstop_lat": takeAt['lat'],
+                        "busstop_lon": takeAt['lon'],
                     },
                     "getoff_at_busstop": {
                         "busstop_id": getOffAt['sid'],
                         "busstop_name_th": getOffAt['sname'],
                         "busstop_name_en": getOffAt['name_e'],
-                        "busstop_lat": int(getOffAt['lat']),
-                        "busstop_lon": int(getOffAt['lon']),
+                        "busstop_lat": getOffAt['lat'],
+                        "busstop_lon": getOffAt['lon'],
                     },
                     "from_place": None,
                     "to_place": None,
-                    "polyline": polyLine
+                    "polyline": reshaped_ansline
                 }
                 planPath.append(plan)
                 seq += 1
+                ansline = []
     response = {"code": 200, "message": "ok", "plan": planPath}
     parsed_data = json.dumps(response, default=int)
 
-    return parsed_data
-
-
-
-# %%
+    return parsed_data, route_ansLines
