@@ -359,7 +359,6 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
                 reshaped_ansline = reshape_ansline_to_rpath(
                     takeAt['route_id'], ansline)
                 route_ansLines[takeAt['route_id']] = reshaped_ansline
-                print(reshaped_ansline)
                 plan = {
                     "seq": seq,
                     "travel_type": 2,
