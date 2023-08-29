@@ -1,4 +1,4 @@
-
+#%%
 import pandas as pd
 from math import sin, cos, sqrt, atan2, radians
 from rdflib import URIRef, BNode, Literal
@@ -88,29 +88,6 @@ def findMinHop(start, des, loaded_graph_rdf):
 
 def _findDistanceTH(lat1, lon1, lat2, lon2):
     return (110*((lat1-lat2)**2+(lon1-lon2)**2)**0.5)*1000
-
-def findTravelTime(sid1, sid2):
-
-    # route = 169
-    _TimeTravel = "data/csv/time_travel.csv" 
-    TimeTravel = pd.read_csv(_TimeTravel)
-
-    filtered_sid1 = TimeTravel[TimeTravel['sid'] == sid1]
-    filtered_sid2 = TimeTravel[TimeTravel['sid'] == sid2]
-
-    merged = filtered_sid1.merge(filtered_sid2, on=('day_of_week', 'hr'))
-
-    merged.drop_duplicates(["hr"], inplace=True)
-
-    merged['ts_x'] = pd.to_datetime(merged['ts_x'])
-    merged['ts_y'] = pd.to_datetime(merged['ts_y'])
-
-
-    mins = (merged['ts_y'] - merged['ts_x']).dt.total_seconds()/60
-    mins = [value for value in mins if value > 0]
-    result = int(mins[0]) if mins else 0
-
-    return result
 
 def getRoute(start_lat, start_lon, destination_lat, destination_lon):
     seq = 1
@@ -332,7 +309,7 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
                 busPlan = seqPath[index][key]
                 takeAt = busPlan.iloc[0]
                 getOffAt = busPlan.iloc[-1]
-                _polyLine = busPlan[['lat', 'lon']].astype(int).values.tolist()
+                _polyLine = busPlan[['lat', 'lon']].astype(float).values.tolist()
                 polyLine = [{"line_lat": lat, "line_lon": lon}
                             for lat, lon in _polyLine]
                 plan = {
@@ -375,3 +352,6 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
 
     return parsed_data
 
+
+
+# %%
