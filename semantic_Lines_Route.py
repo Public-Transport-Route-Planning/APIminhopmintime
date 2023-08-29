@@ -332,7 +332,7 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
                 busPlan = seqPath[index][key]
                 takeAt = busPlan.iloc[0]
                 getOffAt = busPlan.iloc[-1]
-                _polyLine = busPlan[['lat', 'lon']].astype(int).values.tolist()
+                _polyLine = busPlan[['lat', 'lon']].astype(float).values.tolist()
                 polyLine = [{"line_lat": lat, "line_lon": lon}
                             for lat, lon in _polyLine]
                 plan = {
