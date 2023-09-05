@@ -1,7 +1,6 @@
 
 import pandas as pd
-from rdflib import Graph
-from rdflib.namespace import CSVW, DC, DCAT, DCTERMS, DOAP, FOAF, ODRL2, ORG, OWL, PROF, PROV, RDF, RDFS, SDO, SH, SKOS, SOSA, SSN, TIME, VOID, XMLNS, XSD
+from rdflib.namespace import RDF, RDFS
 import re
 from enum import Enum
 from flask import json
@@ -152,8 +151,8 @@ def _formatWalkResponse(seq, timeTravel, from_place=None, to_place=None, start_l
 
 
 def findMinHop(start, des, loaded_graph_rdf):
-    hop = 3
-    max_hops = 4
+    hop = 1
+    max_hops = 2
     source_node = f"sta:busnode_{start}"
     target_node = f"sta:busnode_{des}"
     found_result = False
@@ -217,7 +216,7 @@ def reshape_ansline_to_rpath(routeId, lines):
     return reshaped_ansline
 
 
-def getRoute(start_lat, start_lon, destination_lat, destination_lon):
+def getRoute(start_lat, start_lon, destination_lat, destination_lon, busGraph):
     seq = 1
     firstTime = True
     seqPath = []
@@ -225,24 +224,18 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
 
     _mainRoutes = "data/csv/mainRoutes.csv"
     mainRoutes = pd.read_csv(_mainRoutes)
-    route_ids_to_filter = ["519", "8", "1", "1-18", "1-13", "169", "171"]
-    mainRoutes = mainRoutes[mainRoutes['route_id'].isin(route_ids_to_filter)]
     mainRoutes['distance_to_start'] = _findDistanceTH(
         start_lat, start_lon, mainRoutes['lat'], mainRoutes['lon'])
     mainRoutes['distance_to_destination'] = _findDistanceTH(
         destination_lat, destination_lon, mainRoutes['lat'], mainRoutes['lon'])
-
-    loaded_graph_rdf = Graph()
-    loaded_graph_rdf.parse(
-        "data/graph/Inferred_knowledge_graph.rdf", format="xml")
-
     closest_startpoint = mainRoutes.loc[mainRoutes['distance_to_start'].idxmin(
     )]
     closest_destinationpoint = mainRoutes.loc[mainRoutes['distance_to_destination'].idxmin(
     )]
 
     minHops = findMinHop(closest_startpoint["sid"],
-                         closest_destinationpoint["sid"], loaded_graph_rdf)
+                         closest_destinationpoint["sid"], busGraph)
+
     for i in range(len(minHops)):
         if minHops[i].startswith("bus_"):
             busNumber = re.search(r'\d+', minHops[i]).group()
@@ -266,8 +259,10 @@ def getRoute(start_lat, start_lon, destination_lat, destination_lon):
 
                     nameEng = mainRoutes.loc[mainRoutes['sid'] == int(
                         busStop), 'name_e'].values[0]
+
                     seqStart = mainGo.loc[(mainGo['name_e']
                                            == nameEng), 'seq'].values[0]
+
                     seqEnd = mainGo.loc[(mainGo['name_e']
                                          == closest_destinationpoint['name_e']), 'seq'].values[0]
 
